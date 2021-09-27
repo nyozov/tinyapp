@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/nyozov/tinyapp/issues"
   },
-  "homepage": "https://github.com/nyozov/tinyapp#readme"
+  "homepage": "https://github.com/nyozov/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
