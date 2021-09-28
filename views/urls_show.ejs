@@ -17,10 +17,11 @@
       </div>
     <div class="card-footer text-muted">
     <h3 align-text: "center">Edit</h3>
-    <form action = "/urls<%= shortURL %>" method = POST>
-      <label for = "newURL">New URL:</label>
-      <input type = "text" name = "newURL">
-    <button type = "submit" class="btn btn-primary">Submit</button></form>
+    <form  method = "POST" action = "/urls/<%= shortURL %>" >
+      <label for = "longURL">New URL:</label>
+      <input type = "text" name = "longURL" value = <%= longURL %>>
+      <button type = "submit" class="btn btn-primary">Submit</button>
+    </form>
   </div>
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
