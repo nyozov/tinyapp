@@ -78,7 +78,6 @@ app.listen(PORT, () => {
 app.get("/urls", (req, res) => {
   const templateVars = {
     user: users[req.cookies["user_id"]],
-    username: req.cookies["username"],
     urls: urlDatabase};
   res.render("urls_index", templateVars);
 });
