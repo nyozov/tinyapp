@@ -17,7 +17,7 @@
       </div>
     <div class="card-footer text-muted">
     <h3 align-text: "center">Edit</h3>
-    <form  method = "POST" action = "/urls/<%= shortURL %>" >
+    <form id = "name" method = "POST" action = "/urls/<%= shortURL %>" >
       <label for = "longURL">New URL:</label>
       <input type = "text" name = "longURL" value = <%= longURL %>>
       <button type = "submit" class="btn btn-primary">Submit</button>
