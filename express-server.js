@@ -18,6 +18,7 @@ function generateRandomString() {
 
 
 
+
 app.set("view engine", "ejs");
 
 
@@ -116,8 +117,30 @@ app.get("/register", (req, res)=>{
   res.render("register")
 })
 
+const findUserByEmail = function (email, users) {
+  for (let userId in users) {
+    const user = users[userId];
+    if (email === user.email) {
+      return user;
+    }
+  }
+
+  return false;
+};
+
 
 app.post("/register", (req, res)=> {
+  if (req.body.email === "" || req.body.password === ""){
+    res.status(400).send('Please enter email and password')
+    return
+    
+  }
+  const userFound = findUserByEmail(req.body.email, users)
+  if (userFound) {
+    res.status(400).send("Email already registered")
+    return
+  }
+  
   const randomString = generateRandomString()
   const id = randomString
   const email = req.body.email;
@@ -126,10 +149,12 @@ app.post("/register", (req, res)=> {
     id,
     email, 
     password
+    
   }
   
   res.cookie("user_id", id)
-  console.log(req.cookies["user_id"])
+  
+  console.log(users)
 
   res.redirect("/urls")
 
