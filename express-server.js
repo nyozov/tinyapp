@@ -16,6 +16,30 @@ function generateRandomString() {
   return result;
 }
 
+const findUserByEmail = function(email, users) {
+  for (let userId in users) {
+    const user = users[userId];
+    if (email === user.email) {
+      return user;
+    }
+  }
+
+  return false;
+};
+
+const authenticateUser = function (email, password, users) {
+  // retrieve the user from the db
+  const userFound = findUserByEmail(email, users);
+
+  // compare the passwords
+  // password match => log in
+  // password dont' match => error message
+  if (userFound && userFound.password === password) {
+    return userFound;
+  }
+
+  return false;
+};
 
 
 
@@ -102,11 +126,14 @@ app.post("/urls/:shortURL", (req, res) => {
 
 
 app.post("/login", (req, res)=> {
- 
-  res.cookie("username", req.body.username);
-  res.redirect("/urls");
-  console.log(req.body.username);
+  const user = authenticateUser(req.body.email, req.body.password, users);
+  if (user) {
+    res.cookie('user_id', user.id)
+    res.redirect("/urls")
+    return
+  }
   
+  res.status(403).send("Wrong username or password")
 
 });
 
@@ -120,16 +147,7 @@ app.get("/register", (req, res)=>{
   res.render("register");
 });
 
-const findUserByEmail = function(email, users) {
-  for (let userId in users) {
-    const user = users[userId];
-    if (email === user.email) {
-      return user;
-    }
-  }
 
-  return false;
-};
 
 
 app.post("/register", (req, res)=> {
