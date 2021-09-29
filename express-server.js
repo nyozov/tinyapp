@@ -52,6 +52,7 @@ app.listen(PORT, () => {
 
 app.get("/urls", (req, res) => {
   const templateVars = {
+     user: users[req.cookies["user_id"]],
      username: req.cookies["username"], 
      urls: urlDatabase};
   res.render("urls_index", templateVars);
@@ -106,7 +107,7 @@ app.post("/login", (req, res)=> {
 })
 
 app.post("/logout", (req, res)=> {
-  res.clearCookie("username")
+  res.clearCookie("user_id")
   res.redirect("/urls")
 
 })
@@ -121,11 +122,14 @@ app.post("/register", (req, res)=> {
   const id = randomString
   const email = req.body.email;
   const password = req.body.password;
-  users[id] = {id,
-     email, 
-     password}
+  users[id] = { 
+    id,
+    email, 
+    password
+  }
   
   res.cookie("user_id", id)
+  console.log(req.cookies["user_id"])
 
   res.redirect("/urls")
 
