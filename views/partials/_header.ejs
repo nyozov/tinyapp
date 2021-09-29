@@ -11,19 +11,19 @@
         <% if(user) { %>
           <form method = "POST" action = "/logout">
             <%= user.email %>
-            <button type = "submit">Logout</button>
+            <button class ="btn btn-danger"type = "submit">Logout</button>
           
           </form>
 
 
        <% } else { %>
         
-        <form style = "margin-left: 200px" method = "GET" action = "/login">
+        <form  method = "GET" action = "/login">
          
           
           <button class = "btn btn-primary btn-sm" type = "submit">Sign In</button> 
         </form>
-        <form style = "padding-left:25px"method = "GET" action = "/register">
+        <form method = "GET" action = "/register">
           <button class = "btn btn-primary btn-sm" type = "submit">Register</button> 
           </form>
       <% } %>
