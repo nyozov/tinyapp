@@ -9,52 +9,8 @@ app.use(cookieSession({
   name: 'session',
   keys: ['key1']
 }));
+const {generateRandomString, findUserByEmail, authenticateUser, urlsForUser} = require('./helpers')
 
-function generateRandomString() {
-  let result = '';
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  for (let i = 0; i < 6; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
- 
-  }
-  return result;
-}
-
-const findUserByEmail = function(email, users) {
-  for (let userId in users) {
-    const user = users[userId];
-    if (email === user.email) {
-      return user;
-    }
-  }
-
-  return false;
-};
-
-const authenticateUser = function (email, password, users) {
-  // retrieve the user from the db
-  const userFound = findUserByEmail(email, users);
-
-  // compare the passwords
-  // password match => log in
-  // password dont' match => error message
-  if (userFound && bcrypt.compareSync(password, userFound.hashedPassword)){
-    return userFound;
-  }
-
-  return false;
-};
-
-const urlsForUser = function (id,db) {
-  let matchingID = {}
-  for (let key in db){
-    if (db[key].userID === id){
-      matchingID[key] = urlDatabase[key]
-
-    }
-  }
-  return matchingID
-}
 
 
 
@@ -119,7 +75,7 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = { user: users[req.session["user_id"]], shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
-  console.log(urlDatabase)
+  
   
   res.render("urls_show", templateVars);
   
@@ -127,7 +83,7 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.session["user_id"])
+  
   
   if (req.session["user_id"]){
   let userID = req.session["user_id"]
@@ -172,7 +128,7 @@ app.post("/login", (req, res)=> {
   if (user) {
     req.session.user_id = user.id
     res.redirect("/urls")
-    console.log(users)
+    
     return
   }
   
