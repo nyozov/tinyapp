@@ -41,6 +41,17 @@ const authenticateUser = function (email, password, users) {
   return false;
 };
 
+const urlsForUser = function (id,db) {
+  let matchingID = {}
+  for (let key in db){
+    if (db[key].userID === id){
+      matchingID[key] = urlDatabase[key]
+
+    }
+  }
+  return matchingID
+}
+
 
 
 app.set("view engine", "ejs");
@@ -81,9 +92,10 @@ app.listen(PORT, () => {
 });
 
 app.get("/urls", (req, res) => {
+  const userURLs = urlsForUser(req.cookies["user_id"], urlDatabase)
   const templateVars = {
     user: users[req.cookies["user_id"]],
-    urls: urlDatabase};
+    urls: userURLs};
   res.render("urls_index", templateVars);
 });
 
@@ -133,8 +145,12 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
+  if (req.cookies["user_id"] === urlDatabase[req.params.shortURL].userID){
   delete urlDatabase[req.params.shortURL];
   res.redirect("/urls");
+  } else {
+    res.status(403).send("Login required for this action \n")
+  }
 });
 
 app.post("/urls/:shortURL", (req, res) => {
