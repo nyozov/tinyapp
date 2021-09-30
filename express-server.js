@@ -1,4 +1,5 @@
 const express = require("express");
+const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
@@ -34,7 +35,7 @@ const authenticateUser = function (email, password, users) {
   // compare the passwords
   // password match => log in
   // password dont' match => error message
-  if (userFound && userFound.password === password) {
+  if (userFound && bcrypt.compareSync(password, userFound.hashedPassword)){
     return userFound;
   }
 
@@ -168,6 +169,7 @@ app.post("/login", (req, res)=> {
   if (user) {
     res.cookie('user_id', user.id)
     res.redirect("/urls")
+    console.log(users)
     return
   }
   
@@ -204,19 +206,16 @@ app.post("/register", (req, res)=> {
   const id = randomString;
   const email = req.body.email;
   const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10)
   users[id] = {
     id,
     email,
-    password
+    hashedPassword
     
   };
   
   res.cookie("user_id", id);
-  
-  
-
   res.redirect("/urls");
-
 });
 
 app.get("/login", (req, res)=>{
