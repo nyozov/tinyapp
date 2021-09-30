@@ -50,10 +50,15 @@ app.set("view engine", "ejs");
 
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: {
+      longURL: "https://www.tsn.ca",
+      userID: "aJ48lW"
+  },
+  i3BoGr: {
+      longURL: "https://www.google.ca",
+      userID: "aJ48lW"
+  }
 };
-
 const users = {
   "userRandomID": {
     id: "userRandomID",
@@ -89,26 +94,40 @@ app.get("/hello", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   const templateVars = {user: users[req.cookies["user_id"]]};
+  if (templateVars.user){
   res.render("urls_new", templateVars);
+  } else {
+    res.render("login", templateVars)
+  }
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { user: users[req.cookies["user_id"]], shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  const templateVars = { user: users[req.cookies["user_id"]], shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
+  console.log(urlDatabase)
+  
   res.render("urls_show", templateVars);
+  
   
 });
 
 app.post("/urls", (req, res) => {
+  console.log(req.cookies["user_id"])
+  
+  if (req.cookies["user_id"]){
+  let userID = req.cookies["user_id"]
   const randomString = generateRandomString();
-  urlDatabase[randomString] =  req.body.longURL;
+  urlDatabase[randomString] =  {longURL: req.body.longURL, userID: userID};
   res.redirect(`/urls/${randomString}`);
+  } else {
+    res.status(403).send("Login required for this action \n")
+  }
   
 });
 
 
 app.get("/u/:shortURL", (req, res) => {
   
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   
   res.redirect(longURL);
 });
@@ -119,7 +138,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.post("/urls/:shortURL", (req, res) => {
-  urlDatabase[req.params.shortURL] = req.body.longURL;
+  urlDatabase[req.params.shortURL].longURL = req.body.longURL;
   res.redirect("/urls");
 });
 
@@ -174,7 +193,7 @@ app.post("/register", (req, res)=> {
   
   res.cookie("user_id", id);
   
-  console.log(users);
+  
 
   res.redirect("/urls");
 
