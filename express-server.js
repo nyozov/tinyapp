@@ -154,8 +154,12 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.post("/urls/:shortURL", (req, res) => {
+  if (req.cookies["user_id"] === urlDatabase[req.params.shortURL].userID){
   urlDatabase[req.params.shortURL].longURL = req.body.longURL;
   res.redirect("/urls");
+  } else {
+    res.status(403).send("Login required for this action \n")
+  }
 });
 
 
