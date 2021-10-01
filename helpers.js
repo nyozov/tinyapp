@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 
+//this is used to generate userID and shortURL
 const generateRandomString = function() {
   let result = '';
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -10,6 +11,7 @@ const generateRandomString = function() {
   return result;
 };
 
+//this finds matching email, there are chai tests for this
 const findUserByEmail = function(email, users) {
   for (let userId in users) {
     const user = users[userId];
@@ -17,7 +19,6 @@ const findUserByEmail = function(email, users) {
       return user;
     }
   }
-
   return false;
 };
 
@@ -32,13 +33,12 @@ const authenticateUser = function(email, password, users) {
   return false;
 };
 
+//this returns the URLs where the userID is equal to the id of the currently logged-in user.
 const urlsForUser = function(id,db) {
-  //returns the URLs where the userID is equal to the id of the currently logged-in user.
   let matchingID = {};
   for (let key in db) {
     if (db[key].userID === id) {
       matchingID[key] = db[key];
-
     }
   }
   return matchingID;
