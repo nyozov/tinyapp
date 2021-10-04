@@ -49,9 +49,7 @@ app.get("/", (req, res) => {
 
 });
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
+
 
 //urls page - lists all urls created by the user
 app.get("/urls", (req, res) => {
@@ -83,8 +81,6 @@ app.get("/urls/new", (req, res) => {
     res.render("login", templateVars);
     return
   }
-
-  res.status(403).send("Login required for this action \n")
 });
 
 
@@ -116,7 +112,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     return
     
   }
-  res.status(403).send("Login required for this action \n");
+  res.status(403).send("You do not have permission for this \n");
   
 });
 
@@ -126,7 +122,8 @@ app.post("/urls/:shortURL", (req, res) => {
   if (user === urlDatabase[shortURL].userID) {
     urlDatabase[shortURL].longURL = req.body.longURL;
     res.redirect("/urls");
-    return;
+    return
+    
   }
   res.status(403).send("Login required for this action \n");
   
@@ -201,4 +198,8 @@ app.post("/logout", (req, res)=> {
   req.session = null;
   res.redirect("/urls");
 
+});
+
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
 });
