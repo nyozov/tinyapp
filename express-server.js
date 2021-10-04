@@ -81,14 +81,21 @@ app.get("/urls/new", (req, res) => {
     res.render("urls_new", templateVars);
   } else {
     res.render("login", templateVars);
+    return
   }
+
+  res.status(403).send("Login required for this action \n")
 });
 
 
 //page that shows user the shortURL for the given longURL
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { user: users[req.session["user_id"]], shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
+  let templateVars = { user: users[req.session["user_id"]], shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
+  if (req.session["user_id"] === urlDatabase[templateVars.shortURL].userID){
   res.render("urls_show", templateVars);
+  return
+  }
+  res.status(403).send("Login required for this action/ wrong account \n");
 });
 
 //this uses the shortURL to redirect the user to their link
@@ -102,10 +109,12 @@ app.get("/u/:shortURL", (req, res) => {
 //delete created urls
 app.post("/urls/:shortURL/delete", (req, res) => {
   const user = req.session["user_id"];
-  if (user) {
-    delete urlDatabase[req.params.shortURL];
+  const shortURL = req.params.shortURL
+  if (user === urlDatabase[shortURL].userID) {
+    delete urlDatabase[shortURL];
     res.redirect("/urls");
-    return;
+    return
+    
   }
   res.status(403).send("Login required for this action \n");
   
@@ -113,8 +122,9 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 app.post("/urls/:shortURL", (req, res) => {
   const user = req.session["user_id"];
-  if (user) {
-    urlDatabase[req.params.shortURL].longURL = req.body.longURL;
+  const shortURL = req.params.shortURL
+  if (user === urlDatabase[shortURL].userID) {
+    urlDatabase[shortURL].longURL = req.body.longURL;
     res.redirect("/urls");
     return;
   }
@@ -124,12 +134,15 @@ app.post("/urls/:shortURL", (req, res) => {
 
 //register page
 app.get("/register", (req, res)=>{
-  const user = req.session["user_id"];
-  if (user) {
+  let templateVars = {
+    user: users[req.session["user_id"]]
+  }
+  
+  if (templateVars.user) {
     res.redirect("/urls");
     return;
   }
-  res.render("register");
+  res.render("register", templateVars);
   
   
 });
@@ -161,12 +174,16 @@ app.post("/register", (req, res)=> {
 
 //login page
 app.get("/login", (req, res)=>{
-  const user = req.session["user_id"];
-  if (user) {
+  let templateVars = {
+    
+    user: users[req.session["user_id"]]
+  }
+  
+  if (templateVars.user) {
     res.redirect("/urls");
     return;
   }
-  res.render("login");
+  res.render("login", templateVars);
 });
 
 app.post("/login", (req, res)=> {
